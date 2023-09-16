@@ -9,13 +9,27 @@ class Game
   std::array<std::array<int, SIZE>, SIZE> board;
 public:
   Game();
+  void fill_board();
   void print_board();
   bool solve_backtracking();
   bool is_entry_valid(int row, int col);
 };
 
-// Use constructor to bootstrap a known value game board
+// Use constructor to start an empty board
 Game::Game()
+{
+  board[0] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[1] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[2] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[4] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[5] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[6] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[7] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[8] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+}
+
+void Game::fill_board()
 {
   board[0] = {0, 2, 0, 1, 6, 5, 9, 0, 0};
   board[1] = {4, 0, 0, 0, 0, 0, 6, 0, 0};
@@ -131,6 +145,8 @@ bool Game::is_entry_valid(int row, int col)
 int main()
 {
   Game game;
+  game.print_board();
+  game.fill_board();
   game.print_board();
   game.solve_backtracking();
   game.print_board();
