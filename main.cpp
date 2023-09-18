@@ -21,8 +21,8 @@ public:
     using namespace std::chrono;
     auto stop = ClockType::now();
     auto duration = (stop - start_);
-    auto ms = duration_cast<milliseconds>(duration).count();
-    std::cout << ms << " ms " << function_name_ << '\n';
+    auto ms = duration_cast<nanoseconds>(duration).count();
+    std::cout << ms << " ns " << function_name_ << '\n';
   }
 
 private:
@@ -57,6 +57,7 @@ Game::Game()
 
 void Game::fill_board()
 {
+  ScopedTimer timer{__func__};
   board[0] = {0, 2, 0, 1, 6, 5, 9, 0, 0};
   board[1] = {4, 0, 0, 0, 0, 0, 6, 0, 0};
   board[2] = {6, 0, 1, 0, 0, 2, 0, 3, 0};
@@ -89,6 +90,7 @@ void Game::print_board()
 
 bool Game::solve_backtracking()
 {
+  // ScopedTimer timer{__func__};
   //  std::cout << "Solving puzzle..." << std::endl;
   int row, col;
   bool puzzle_done = true;
@@ -174,7 +176,10 @@ int main()
   game.print_board();
   game.fill_board();
   game.print_board();
-  game.solve_backtracking();
+  {
+    ScopedTimer timer{"solve_backtracking"};
+    game.solve_backtracking();
+  }
   game.print_board();
   
   return 0;
