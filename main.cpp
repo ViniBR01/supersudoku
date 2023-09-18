@@ -1,6 +1,7 @@
 #include <iostream>
 #include <array>
 #include <iterator>
+#include <chrono>
 
 #define SIZE 9
 
@@ -9,7 +10,7 @@ class ScopedTimer
 public:
   using ClockType = std::chrono::steady_clock;
 
-  ScopedTimer(const char* func) : function_name_{func}, start{ClockType::now()} {}
+  ScopedTimer(const char* func) : function_name_{func}, start_{ClockType::now()} {}
 
   ScopedTimer(const ScopedTimer&) = delete;
   ScopedTimer(ScopedTimer&&) = delete;
@@ -20,7 +21,7 @@ public:
     using namespace std::chrono;
     auto stop = ClockType::now();
     auto duration = (stop - start_);
-    auto ms = duration_cats<milliseconds>(duration).count();
+    auto ms = duration_cast<milliseconds>(duration).count();
     std::cout << ms << " ms " << function_name_ << '\n';
   }
 
