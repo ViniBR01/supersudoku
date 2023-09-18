@@ -1,6 +1,6 @@
 supersudoku: main.cpp
-	g++ -o supersudoku main.cpp -I.
-	./supersudoku
+	g++ -o supersudoku.out main.cpp -I.
+	./supersudoku.out
 
 run:
-	./supersudoku
+	./supersudoku.out
