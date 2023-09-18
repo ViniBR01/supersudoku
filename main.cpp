@@ -4,6 +4,31 @@
 
 #define SIZE 9
 
+class ScopedTimer
+{
+public:
+  using ClockType = std::chrono::steady_clock;
+
+  ScopedTimer(const char* func) : function_name_{func}, start{ClockType::now()} {}
+
+  ScopedTimer(const ScopedTimer&) = delete;
+  ScopedTimer(ScopedTimer&&) = delete;
+  auto operator=(const ScopedTimer&) -> ScopedTimer& = delete;
+  auto operator=(ScopedTimer&&) -> ScopedTimer& = delete;
+
+  ~ScopedTimer() {
+    using namespace std::chrono;
+    auto stop = ClockType::now();
+    auto duration = (stop - start_);
+    auto ms = duration_cats<milliseconds>(duration).count();
+    std::cout << ms << " ms " << function_name_ << '\n';
+  }
+
+private:
+  const char* function_name_{};
+  const ClockType::time_point start_{};
+};
+
 class Game
 {
   std::array<std::array<int, SIZE>, SIZE> board;
