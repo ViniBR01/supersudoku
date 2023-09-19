@@ -21,8 +21,13 @@ public:
     using namespace std::chrono;
     auto stop = ClockType::now();
     auto duration = (stop - start_);
-    auto ms = duration_cast<nanoseconds>(duration).count();
-    std::cout << ms << " ns " << function_name_ << '\n';
+    auto ns = duration_cast<nanoseconds>(duration).count();
+    if (ns < 3000)
+      std::cout << ns << " ns " << function_name_ << '\n';
+    else if (ns < 3000000)
+      std::cout << ns/1000 << " us " << function_name_ << '\n';
+    else
+      std::cout << ns/1000000 << " ms " << function_name_ << '\n';
   }
 
 private:
@@ -173,7 +178,6 @@ bool Game::is_entry_valid(int row, int col)
 int main()
 {
   Game game;
-  game.print_board();
   game.fill_board();
   game.print_board();
   {
