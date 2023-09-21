@@ -2,6 +2,8 @@
 #include <array>
 #include <iterator>
 #include <chrono>
+#include <numeric>
+#include <algorithm>
 
 #define SIZE 9
 
@@ -41,9 +43,15 @@ class Game
 public:
   Game();
   void fill_board();
+  void clear_board();
   void print_board();
   bool solve_backtracking();
   bool is_entry_valid(int row, int col);
+  void generate_new_game();
+  int remove_entry(int index);
+  bool has_unique_solution();
+  void insert_entry(int entry, int index);
+
 };
 
 // Use constructor to start an empty board
@@ -174,17 +182,79 @@ bool Game::is_entry_valid(int row, int col)
   
   return true;
 }
-  
-int main()
+
+void Game::clear_board()
+{
+  board[0] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[1] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[2] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[4] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[5] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[6] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[7] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  board[8] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+}
+
+void Game::generate_new_game()
+{
+  //TODO: Start with empty board, fill with 1 solution
+  Game game;
+  game.clear_board();
+  game.solve_backtracking();
+
+  // iteratively remove 1 random entry and check if still has unique solution
+  // stop when all entries were tested removed or we hit some threshold for remaining etnries
+  std::array<int, SIZE*SIZE> all_fields;
+  std::iota(all_fields.begin(), all_fields.end(), 0);
+  std::random_shuffle(all_fields.begin(), all_fields.end());
+
+  for (auto index : all_fields)
+    {
+      auto temp_entry = game.remove_entry(index);
+      if (game.has_unique_solution())
+	{
+	  continue;
+	}
+      else
+	{
+	  game.insert_entry(temp_entry, index);
+	}
+    }
+}
+
+int Game::remove_entry(int index)
+{
+  return 0;
+}
+
+bool Game::has_unique_solution()
+{
+  return false;
+}
+
+void Game::insert_entry(int entry, int index)
+{
+}
+
+void test_game()
 {
   Game game;
   game.fill_board();
   game.print_board();
   {
+    //TODO: write proper benchmarking function to run solving K times and print stats (avg, min, max)
     ScopedTimer timer{"solve_backtracking"};
     game.solve_backtracking();
   }
   game.print_board();
+}
+
+int main()
+{
+  //test_game();
+  Game game;
+  game.generate_new_game();
   
   return 0;
 }
