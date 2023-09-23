@@ -51,7 +51,9 @@ public:
   int remove_entry(int index);
   bool has_unique_solution();
   void insert_entry(int entry, int index);
-
+  int count_solutions(int& num_solutions);
+  bool fully_filled();
+  bool correctly_solved();
 };
 
 // Use constructor to start an empty board
@@ -199,9 +201,8 @@ void Game::clear_board()
 void Game::generate_new_game()
 {
   //TODO: Start with empty board, fill with 1 solution
-  Game game;
-  game.clear_board();
-  game.solve_backtracking();
+  this->clear_board();
+  this->solve_backtracking();
 
   // iteratively remove 1 random entry and check if still has unique solution
   // stop when all entries were tested removed or we hit some threshold for remaining etnries
@@ -211,50 +212,147 @@ void Game::generate_new_game()
 
   for (auto index : all_fields)
     {
-      auto temp_entry = game.remove_entry(index);
-      if (game.has_unique_solution())
+      // std::cout << index << "\n";
+      auto temp_entry = this->remove_entry(index);
+      // this->print_board();
+      // std::cout << this->has_unique_solution() << std::endl;
+      if (this->has_unique_solution())
 	{
 	  continue;
 	}
       else
 	{
-	  game.insert_entry(temp_entry, index);
+	  this->insert_entry(temp_entry, index);
 	}
     }
 }
 
+
+int convert_index_to_row(int index)
+{
+  return index / SIZE;
+}
+
+int convert_index_to_col(int index)
+{
+  return index % SIZE;
+}
+
 int Game::remove_entry(int index)
 {
-  return 0;
+  auto row = convert_index_to_row(index);
+  auto col = convert_index_to_col(index);
+  auto entry = board[row][col];
+  board[row][col] = 0;
+  
+  return entry;
 }
 
 bool Game::has_unique_solution()
 {
+  int solution_counter = 0;
+  int num_solutions = 0;
+  //make a copy of the game and check unique solution there
+  auto game_copy = *this;
+  solution_counter = game_copy.count_solutions(num_solutions);
+  if (solution_counter == 1) {
+    return true;
+  }
   return false;
+}
+
+int Game::count_solutions(int& num_solutions)
+{
+  //Base case: it's already fully filled
+  if (this->fully_filled()) {
+    if (this->correctly_solved()) {
+      num_solutions += 1;
+      // std::cout << "Found one good solution" << std::endl;
+    }
+    return num_solutions;
+  }
+
+  //If not fully filled, find next empty entry and try all options
+  for (int row = 0; row < SIZE; ++row) {
+    for (int col = 0; col < SIZE; ++col) {
+      if (board[row][col] == 0) {
+	//start guesses array, for loop over it and call recursively
+	for (int guess = 1; guess <= SIZE; ++guess) {
+	  board[row][col] = guess;
+	  if (this->is_entry_valid(row, col)){
+	    this->count_solutions(num_solutions);
+	    // board[row][col] = 0;
+	  } else {
+	    // board[row][col] = 0;
+	  }
+	} 
+      }
+    }
+  }
+
+  return num_solutions;
+}
+
+bool Game::fully_filled()
+{
+  for (int row = 0; row < SIZE; ++row) {
+    for (int col = 0; col < SIZE; ++col) {
+      if (board[row][col] == 0) {
+	return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool Game::correctly_solved()
+{
+  for (int row = 0; row < SIZE; ++row) {
+    for (int col = 0; col < SIZE; ++col) {
+      if (not this->is_entry_valid(row, col)) {
+	return false;
+      }
+    }
+  }
+  return true;
 }
 
 void Game::insert_entry(int entry, int index)
 {
+  auto row = convert_index_to_row(index);
+  auto col = convert_index_to_col(index);
+  board[row][col] = entry;
 }
 
 void test_game()
 {
   Game game;
   game.fill_board();
-  game.print_board();
+  // game.print_board();
   {
     //TODO: write proper benchmarking function to run solving K times and print stats (avg, min, max)
     ScopedTimer timer{"solve_backtracking"};
     game.solve_backtracking();
   }
-  game.print_board();
+  // game.print_board();
 }
 
 int main()
 {
-  //test_game();
+  // test_game();
   Game game;
-  game.generate_new_game();
+  game.print_board();
+  {
+        ScopedTimer timer{"generate_new_game"};
+	game.generate_new_game();
+  }
+  game.print_board();
+
+  {
+    ScopedTimer time{"solve"};
+    game.solve_backtracking();
+  }
+  game.print_board();
   
   return 0;
 }
