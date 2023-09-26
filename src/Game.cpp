@@ -4,6 +4,8 @@
 #include <numeric>
 
 #include "Game.hpp"
+#include "ScopedTimer.hpp"
+#include "utils.hpp"
 
 // Use constructor to start an empty board
 Game::Game()
