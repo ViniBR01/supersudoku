@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "utils.hpp"
 
 int convert_index_to_row(int index)
 {
