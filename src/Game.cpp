@@ -216,14 +216,15 @@ int Game::count_solutions(int& num_solutions)
   for (int row = 0; row < SIZE; ++row) {
     for (int col = 0; col < SIZE; ++col) {
       if (board[row][col] == 0) {
-	//start guesses array, for loop over it and call recursively
+	//start guesses array, {for-}loop over it and call recursively
 	for (int guess = 1; guess <= SIZE; ++guess) {
 	  board[row][col] = guess;
 	  if (this->is_entry_valid(row, col)){
 	    this->count_solutions(num_solutions);
-	    // board[row][col] = 0;
 	  } else {
-	    // board[row][col] = 0;
+	    if (this->board[row][col] == 9) { 
+	      board[row][col] = -1;
+	    }
 	  }
 	} 
       }
