@@ -17,9 +17,10 @@ public:
   int remove_entry(int index);
   bool has_unique_solution();
   void insert_entry(int entry, int index);
-  int count_solutions(int& num_solutions);
+  int count_solutions();
   bool fully_filled();
   bool correctly_solved();
 private:
   std::array<std::array<int, SIZE>, SIZE> board;
+  bool recursive_count(int &total_solutions);
 };

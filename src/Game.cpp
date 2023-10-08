@@ -190,48 +190,35 @@ int Game::remove_entry(int index)
 
 bool Game::has_unique_solution()
 {
-  int solution_counter = 0;
-  int num_solutions = 0;
   //make a copy of the game and check unique solution there
   auto game_copy = *this;
-  solution_counter = game_copy.count_solutions(num_solutions);
+  int solution_counter = game_copy.count_solutions();
   if (solution_counter == 1) {
     return true;
   }
   return false;
 }
 
-int Game::count_solutions(int& num_solutions)
+int Game::count_solutions()
 {
-  //Base case: it's already fully filled
-  if (this->fully_filled()) {
-    if (this->correctly_solved()) {
-      num_solutions += 1;
-      // std::cout << "Found one good solution" << std::endl;
-    }
-    return num_solutions;
-  }
+  //Recursive function to solve sudoku
+  //
+  //Useful methods:
+  //this->fully_filled()
+  //this->correctly_solved()
+  //this->is_entry_valid()
+  //
+  int total_solutions = 0;
+  
+  Game temp_game = *this;
+  temp_game.recursive_count(total_solutions);
 
-  //If not fully filled, find next empty entry and try all options
-  for (int row = 0; row < SIZE; ++row) {
-    for (int col = 0; col < SIZE; ++col) {
-      if (board[row][col] == 0) {
-	//start guesses array, {for-}loop over it and call recursively
-	for (int guess = 1; guess <= SIZE; ++guess) {
-	  board[row][col] = guess;
-	  if (this->is_entry_valid(row, col)){
-	    this->count_solutions(num_solutions);
-	  } else {
-	    if (this->board[row][col] == 9) { 
-	      board[row][col] = -1;
-	    }
-	  }
-	} 
-      }
-    }
-  }
+  return total_solutions;
+}
 
-  return num_solutions;
+bool Game::recursive_count(int &total_solutions) {
+  total_solutions = 5;
+  return true;
 }
 
 bool Game::fully_filled()

@@ -24,9 +24,7 @@ int main()
   game.fill_board();
   game.print_board();
 
-  int num_solutions = 0;
-  game.count_solutions(num_solutions);
-  std::cout << num_solutions << std::endl;
+  std::cout << game.count_solutions() << std::endl;
   
   // {
   //       ScopedTimer timer{"generate_new_game"};
