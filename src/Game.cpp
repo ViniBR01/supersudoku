@@ -1,7 +1,10 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <numeric>
+#include <stack>
+#include <vector>
 
 #include "Game.hpp"
 #include "ScopedTimer.hpp"
@@ -178,6 +181,15 @@ void Game::generate_new_game()
     }
 }
 
+int Game::get_entry(int index)
+{
+  auto row = convert_index_to_row(index);
+  auto col = convert_index_to_col(index);
+  auto entry = board[row][col];
+  
+  return entry;
+}
+
 int Game::remove_entry(int index)
 {
   auto row = convert_index_to_row(index);
@@ -216,8 +228,147 @@ int Game::count_solutions()
   return total_solutions;
 }
 
+class Node {
+public:
+  bool set_level(int new_level);
+  int get_level();
+  bool set_entry(int new_level);
+  int get_entry();
+  bool set_child(std::shared_ptr<Node> child);
+  std::shared_ptr<Node> get_child(int value);
+  int get_num_children();
+  bool is_first_visit();
+  void mark_as_visited();
+  bool is_fixed();
+  void mark_as_fixed();
+private:
+  std::vector<std::shared_ptr<Node>> children;
+  int level{0};
+  int entry{0};
+  bool visited{0};
+  bool fixed{0};
+};
+
+bool Node::set_level(int new_level) {
+  level = new_level;
+  return true;
+}
+int Node::get_level() {
+  return level;
+}
+bool Node::set_entry(int new_entry) {
+  entry = new_entry;
+  return true;
+}
+int Node::get_entry() {
+  return entry;
+}bool Node::set_child(std::shared_ptr<Node> child) {
+  children.push_back(child);
+  return true;
+}
+std::shared_ptr<Node> Node::get_child(int value) {
+  return children[value-1];
+}
+int Node::get_num_children() {
+  return children.size();
+}
+bool Node::is_first_visit() {
+  return visited==false;
+}
+void Node::mark_as_visited() {
+  visited = true;
+}
+bool Node::is_fixed() {
+  return fixed;
+}
+void Node::mark_as_fixed() {
+  fixed = true;
+}
+
+// Question: can I count all solutions with a single instance of the game class?
 bool Game::recursive_count(int &total_solutions) {
-  total_solutions = 5;
+  std::shared_ptr<Node> root = std::make_shared<Node>(); //Represents unexistent node
+  root->set_level(-1);
+  root->set_entry(-1);
+  //std::cout << root->get_level() << ": " << root->get_entry() << std::endl;
+
+  std::stack<std::shared_ptr<Node>> node_stack; //top() push() pop()
+  node_stack.push(root);
+
+  while(not node_stack.empty()) {
+    auto node = node_stack.top();
+    std::cout << node->get_level() << ": " << node->get_entry() << std::endl;
+    // std::cout << node->get_level() << std::endl;
+    // this->print_board();
+    //If not the root, fill that entry
+    if (node->get_level() != -1) {
+      this->insert_entry(node->get_entry(), node->get_level());
+    }
+
+    //Check if level is SIZE*SIZE -1: if yes, increment total_solutions
+    //pop node and continue
+    if (node->get_level() == SIZE*SIZE - 1) {
+      ++total_solutions;
+      node_stack.pop();
+      if (not node->is_fixed()) {
+	this->insert_entry(0, node->get_level());
+      }
+      continue;
+    }
+
+    //Check if each of children is viable and create node if yes
+    //Add newly created nodes to the stack
+    if (node->is_first_visit()) {
+      //1st case: the next level is already filled:
+      if (this->get_entry(node->get_level() + 1) != 0) {
+	auto new_node = std::make_shared<Node>();
+	new_node->set_level(node->get_level() + 1);
+	new_node->set_entry(this->get_entry(node->get_level() + 1));
+	new_node->mark_as_fixed();
+	node->set_child(new_node);
+	node_stack.push(new_node);
+	node->mark_as_visited();
+	continue;
+      }
+
+      //2nd case: the next level is empty:
+      else {
+	//test all possible guesses from 1 to N and create nodes if viable
+	for (int guess = 1; guess <= SIZE; ++guess) {
+	  this->insert_entry(guess, node->get_level() + 1);
+	  if (
+	      this->is_entry_valid(
+				   convert_index_to_row(node->get_level() + 1),
+				   convert_index_to_col(node->get_level() + 1)
+				   )
+	      )
+	    {
+	      auto new_node = std::make_shared<Node>();
+	      new_node->set_level(node->get_level() + 1);
+	      new_node->set_entry(guess);
+	      node->set_child(new_node);
+	      node_stack.push(new_node);
+	    }
+	  //cleanup next field before leaving
+	  this->insert_entry(0, node->get_level() + 1);
+	}
+	//remember to mark_as_visited();
+	node->mark_as_visited();
+	continue;
+      }
+    }
+
+    // If this is not the first visit to a node, it means it was already checked
+    else {
+      node_stack.pop();
+      if (not node->is_fixed()) {
+	// cleanup game field for current node - set it to 0
+	this->insert_entry(0, node->get_level());
+      }
+      continue;
+    }
+  }
+  
   return true;
 }
 

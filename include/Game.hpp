@@ -14,6 +14,7 @@ public:
   bool solve_backtracking();
   bool is_entry_valid(int row, int col);
   void generate_new_game();
+  int get_entry(int index);
   int remove_entry(int index);
   bool has_unique_solution();
   void insert_entry(int entry, int index);

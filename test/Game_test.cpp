@@ -38,14 +38,10 @@ TEST(Game, has_unique_solution) {
 TEST(Game, count_solutions) {
   Game game;
   game.fill_board();
-  int num_solutions = 0;
-  game.count_solutions(num_solutions);
-  EXPECT_EQ(num_solutions, 1);
+  EXPECT_EQ(game.count_solutions(), 1);
   game.clear_board();
   game.generate_new_game();
-  num_solutions = 0;
-  game.count_solutions(num_solutions);
-  EXPECT_EQ(num_solutions, 1);
+  EXPECT_EQ(game.count_solutions(), 1);
 }
 
 TEST(Game, correctly_solved) {
