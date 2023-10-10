@@ -211,25 +211,9 @@ bool Game::has_unique_solution()
   return false;
 }
 
-int Game::count_solutions()
-{
-  //Recursive function to solve sudoku
-  //
-  //Useful methods:
-  //this->fully_filled()
-  //this->correctly_solved()
-  //this->is_entry_valid()
-  //
-  int total_solutions = 0;
-  
-  Game temp_game = *this;
-  temp_game.recursive_count(total_solutions);
-
-  return total_solutions;
-}
-
 class Node {
 public:
+  ~Node();
   bool set_level(int new_level);
   int get_level();
   bool set_entry(int new_level);
@@ -248,6 +232,7 @@ private:
   bool visited{0};
   bool fixed{0};
 };
+Node::~Node() {}
 
 bool Node::set_level(int new_level) {
   level = new_level;
@@ -286,7 +271,8 @@ void Node::mark_as_fixed() {
 }
 
 // Question: can I count all solutions with a single instance of the game class?
-bool Game::recursive_count(int &total_solutions) {
+int Game::count_solutions() {
+  int total_solutions = 0;
   std::shared_ptr<Node> root = std::make_shared<Node>(); //Represents unexistent node
   root->set_level(-1);
   root->set_entry(-1);
@@ -297,7 +283,7 @@ bool Game::recursive_count(int &total_solutions) {
 
   while(not node_stack.empty()) {
     auto node = node_stack.top();
-    std::cout << node->get_level() << ": " << node->get_entry() << std::endl;
+    // std::cout << node->get_level() << ": " << node->get_entry() << std::endl;
     // std::cout << node->get_level() << std::endl;
     // this->print_board();
     //If not the root, fill that entry
@@ -325,7 +311,7 @@ bool Game::recursive_count(int &total_solutions) {
 	new_node->set_level(node->get_level() + 1);
 	new_node->set_entry(this->get_entry(node->get_level() + 1));
 	new_node->mark_as_fixed();
-	node->set_child(new_node);
+	//node->set_child(new_node);
 	node_stack.push(new_node);
 	node->mark_as_visited();
 	continue;
@@ -346,7 +332,7 @@ bool Game::recursive_count(int &total_solutions) {
 	      auto new_node = std::make_shared<Node>();
 	      new_node->set_level(node->get_level() + 1);
 	      new_node->set_entry(guess);
-	      node->set_child(new_node);
+	      //node->set_child(new_node);
 	      node_stack.push(new_node);
 	    }
 	  //cleanup next field before leaving
@@ -369,7 +355,7 @@ bool Game::recursive_count(int &total_solutions) {
     }
   }
   
-  return true;
+  return total_solutions;
 }
 
 bool Game::fully_filled()

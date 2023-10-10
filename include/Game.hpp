@@ -23,5 +23,4 @@ public:
   bool correctly_solved();
 private:
   std::array<std::array<int, SIZE>, SIZE> board;
-  bool recursive_count(int &total_solutions);
 };
