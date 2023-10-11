@@ -27,6 +27,9 @@ TEST(Game, solve_backtracking) {
 
 TEST(Game, has_unique_solution) {
   Game game;
+  game.fill_board();
+  game.insert_entry(1, 5);
+  game.insert_entry(1, 6);
   EXPECT_FALSE(game.has_unique_solution());
   game.fill_board();
   EXPECT_TRUE(game.has_unique_solution());
