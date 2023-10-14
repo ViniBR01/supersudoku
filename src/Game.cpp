@@ -82,8 +82,11 @@ bool Game::solve_backtracking()
       return true;
     }
 
-  int guess;
-  for (guess = 1; guess <= SIZE; ++guess)
+  std::array<int, SIZE> all_guesses;
+  std::iota(all_guesses.begin(), all_guesses.end(), 1);
+  std::random_shuffle(all_guesses.begin(), all_guesses.end());
+
+  for (auto guess : all_guesses)
     {
       //      std::cout << "guessing " << row << " " << col << " " << guess << std::endl;
       board[row][col] = guess;
