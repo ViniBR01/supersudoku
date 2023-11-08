@@ -13,7 +13,7 @@ public:
   bool addPencilCandidate(elementType element);
   bool removePencilCandidate(elementType element);
 private:
-  elementType element_;
+  elementType element_{};
   bool isClue_{};
   std::set<elementType> pencilCandidates_;
 };
