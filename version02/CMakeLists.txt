@@ -9,7 +9,4 @@ add_subdirectory(src)
 
 add_executable(Main main.cpp)
 
-target_link_libraries(Main PUBLIC Cell)
-
 target_include_directories(Main PUBLIC "${PROJECT_SOURCE_DIR}/src")
-target_include_directories(Main PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")
