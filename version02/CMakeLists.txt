@@ -18,6 +18,8 @@ FetchContent_MakeAvailable(googletest)
 add_subdirectory(src)
 
 add_executable(Main main.cpp)
+target_include_directories(Main PUBLIC "${PROJECT_SOURCE_DIR}/src")
 
 # Build the test code
-target_include_directories(Main PUBLIC "${PROJECT_SOURCE_DIR}/src")
+enable_testing()
+add_subdirectory(test)
