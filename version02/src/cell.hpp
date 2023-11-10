@@ -59,7 +59,7 @@ namespace sudoku {
   template <typename elementType, size_t puzzleCardinality>
   bool Cell<elementType, puzzleCardinality>::addPencilCandidate(elementType element)
   {
-    if (pencilCandidates_.contains(element))
+    if (isClue_ or pencilCandidates_.contains(element))
       {
 	return false;
       }
@@ -70,7 +70,7 @@ namespace sudoku {
   template <typename elementType, size_t puzzleCardinality>
   bool Cell<elementType, puzzleCardinality>::removePencilCandidate(elementType element)
   {
-    if (not pencilCandidates_.contains(element))
+    if (isClue_ or not pencilCandidates_.contains(element))
       {
 	return false;
       }
