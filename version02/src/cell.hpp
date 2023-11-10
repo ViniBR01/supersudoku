@@ -7,6 +7,8 @@ namespace sudoku {
   class Cell
   {
   public:
+    Cell() = default;
+    Cell(elementType clue);
     bool isClue();
     bool setElement(elementType element);
     elementType getElement();
@@ -18,6 +20,12 @@ namespace sudoku {
     bool isClue_{};
     std::set<elementType> pencilCandidates_;
   };
+
+  template <typename elementType, size_t puzzleCardinality>
+  Cell<elementType, puzzleCardinality>::Cell(elementType clue) :
+    element_(clue),
+    isClue_(true)
+  {}
 
   template <typename elementType, size_t puzzleCardinality>
   bool Cell<elementType, puzzleCardinality>::isClue()
